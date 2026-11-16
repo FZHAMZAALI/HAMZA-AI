@@ -1,3 +1,4 @@
 ckpt.pt
 data.txt
 __pycache__/
+train.log
