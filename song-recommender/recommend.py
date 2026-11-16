@@ -24,13 +24,18 @@ X = np.hstack([X, genres])
 knn = NearestNeighbors(n_neighbors=30).fit(X)
 
 
-def recommend(name, n=10):
+def find(name):
+    """Naam se song ka index dhoondo (sabse popular match). Na mile to None."""
     hits = df[df.track_name.str.lower() == name.lower()]
     if hits.empty:
         hits = df[df.track_name.str.lower().str.contains(name.lower(), regex=False)]
-    if hits.empty:
+    return None if hits.empty else hits.sort_values("popularity", ascending=False).index[0]
+
+
+def recommend(name, n=10):
+    i = find(name)
+    if i is None:
         return None, None
-    i = hits.sort_values("popularity", ascending=False).index[0]   # sabse popular match chuno
     _, idx = knn.kneighbors(X[[i]])
     seen, out = {df.track_name[i].lower()}, []
     for j in idx[0][1:]:
